@@ -12,3 +12,9 @@ setup(
     CMakeExtension('playground.cmake_ext', 'src/cmake_ext')  # TODO importing this is broken -- seg fault
   ]
 )
+
+import os, os.path
+cwd = os.getcwd()
+os.chdir('src/skbuild_ext')
+import src.skbuild_ext.setup as skbuild_ext
+os.chdir(cwd)
