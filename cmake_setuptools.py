@@ -4,15 +4,14 @@ import os
 import pathlib
 
 from setuptools import Extension
-from setuptools.command.build_ext import build_ext
+from setuptools.command.build_ext import build_ext as build_ext_orig
 
 class CMakeExtension(Extension):
     def __init__(self, name):
         # don't invoke the original build_ext for this special extension
         super().__init__(name, sources=[])
 
-
-class cmake_build_ext(build_ext):
+class cmake_build_ext(build_ext_orig):
     def run(self):
         for ext in self.extensions:
             self.build_cmake(ext)
