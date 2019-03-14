@@ -1,8 +1,24 @@
 #include <Python.h>
 
+#ifdef CMAKE
+#define MODNAME ext1cmake
+#else
+#define MODNAME ext1
+#endif
+
+#define STR(x) #x
+#define XSTR(x) STR(x)
+#define MODSTR XSTR(MODNAME)
+
+#define MODVAR_0(pre, mname, post) pre ## mname ## post
+#define MODVAR_1(pre, mname, post) MODVAR_0(pre, mname, post)
+#define MODVAR(pre, post) MODVAR_1(pre, MODNAME, post)
+#define MODPRE(pre) MODVAR(pre ## _,)
+#define MODPOST(post) MODVAR(, _ ## post)
+
 static PyObject *ExtError;
 
-static PyObject *ext1_system(PyObject *self, PyObject *args) {
+static PyObject *MODPOST(system) (PyObject *self, PyObject *args) {
     const char *command;
 
     if (!PyArg_ParseTuple(args, "s", &command))
@@ -16,20 +32,20 @@ static PyObject *ext1_system(PyObject *self, PyObject *args) {
 }
 
 static PyMethodDef extMethods[] = {
-    { "system",  ext1_system, METH_VARARGS, "Execute a shell command." },
+    { "system",  MODPOST(system), METH_VARARGS, "Execute a shell command." },
     { NULL, NULL, 0, NULL }
 };
 
 char ext_doc[] = "Package demoing C extensions";
 
-static struct PyModuleDef extModule = { PyModuleDef_HEAD_INIT, "ext1", ext_doc, -1, extMethods };
+static struct PyModuleDef extModule = { PyModuleDef_HEAD_INIT, MODSTR, ext_doc, -1, extMethods };
 
-PyMODINIT_FUNC PyInit_ext1(void) {
+PyMODINIT_FUNC MODPRE(PyInit) (void) {
     PyObject *m = PyModule_Create(&extModule);
     if (m == NULL)
         return NULL;
 
-    ExtError = PyErr_NewException("ext1.error", NULL, NULL);
+    ExtError = PyErr_NewException(MODSTR".error", NULL, NULL);
     Py_INCREF(ExtError);
     PyModule_AddObject(m, "error", ExtError);
     return m;

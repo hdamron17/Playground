@@ -1,5 +1,5 @@
 from setuptools import setup, Extension
-#from cmake_setuptools import CMakeExtension, cmake_build_ext
+from cmake_setuptools import CMakeExtension, cmake_build_ext
 
 setup(
   name = 'ExtensionPlayground',
@@ -8,10 +8,10 @@ setup(
   packages = ['playground'],
   package_dir = {'': 'src'},
   ext_modules = [
-    Extension('playground.ext1', ['src/playground/ext1.c'])
-    #CMakeExtension('playground.ext1')
+    Extension('playground.ext1', ['src/playground/ext1.c']),
+    CMakeExtension('playground.ext1cmake')
   ],
-  #cmdclass = {
-  #  'build_ext': cmake_build_ext,
-  #}
+  cmdclass = {
+    'build_ext': cmake_build_ext,
+  }
 )
