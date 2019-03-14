@@ -4,6 +4,6 @@ project(ExtensionPlayground)
 find_package(PythonLibs REQUIRED)
 include_directories(${PYTHON_INCLUDE_DIRS})
 
-add_library(cmake_ext SHARED MODULE src/playground/cmake_ext.c)
+add_library(cmake_ext SHARED MODULE cmake_ext.c)
 target_link_libraries(cmake_ext ${PYTHON_LIBRARIES})
 set_target_properties(cmake_ext PROPERTIES PREFIX "")

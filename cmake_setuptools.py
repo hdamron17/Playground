@@ -7,8 +7,9 @@ from setuptools import Extension, setup as setup_orig
 from setuptools.command.build_ext import build_ext as build_ext_orig
 
 class CMakeExtension(Extension):
-    def __init__(self, name):
+    def __init__(self, name, dir='.'):
         # don't invoke the original build_ext for this special extension
+        self.dir = pathlib.Path(dir).absolute()
         super().__init__(name, [])
 
 class cmake_build_ext(build_ext_orig):
@@ -58,7 +59,7 @@ class cmake_build_ext(build_ext_orig):
         ]
 
         os.chdir(str(build_temp))
-        self.spawn(['cmake', str(cwd)] + cmake_args)
+        self.spawn(['cmake', str(ext.dir)] + cmake_args)
         if not self.dry_run:
             self.spawn(['cmake', '--build', '.'] + build_args)
         os.chdir(str(cwd))
