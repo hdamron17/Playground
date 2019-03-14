@@ -3,7 +3,7 @@
 import os
 import pathlib
 
-from setuptools import Extension
+from setuptools import Extension, setup as setup_orig
 from setuptools.command.build_ext import build_ext as build_ext_orig
 
 class CMakeExtension(Extension):
@@ -13,9 +13,19 @@ class CMakeExtension(Extension):
 
 class cmake_build_ext(build_ext_orig):
     def run(self):
+        self.dummy = self.dummy_copy()
         for ext in self.extensions:
             self.build_cmake(ext)
         super().run()
+
+    def dummy_copy(self):
+        from copy import deepcopy
+        cpy = deepcopy(self)
+        orig_build_extensions = cpy.build_extensions
+        cpy.build_extensions = lambda: None  # Dummy to prevent actual building
+        super(cmake_build_ext, cpy).run()
+        cpy.build_extensions = orig_build_extensions  # Restore original
+        return cpy
 
     def build_cmake(self, ext):
         if not isinstance(ext, CMakeExtension):
@@ -28,14 +38,16 @@ class cmake_build_ext(build_ext_orig):
         extpath.parent.mkdir(parents=True, exist_ok=True)
 
         # Change shared library naming convention
-        lib_prefix, lib_suffix = extpath.name.split(ext.name.rsplit('.', 1)[-1], 1)
+        #lib_prefix, lib_suffix = extpath.name.split(ext.name.rsplit('.', 1)[-1], 1)
 
         config = 'Debug' if self.debug else 'Release'
         cmake_args = [
-            '-DCMAKE_SHARED_LIBRARY_PREFIX=' + lib_prefix,
-            '-DCMAKE_SHARED_LIBRARY_SUFFIX=' + lib_suffix,
-            '-DPYTHON_LIBRARY_PREFIX=' + lib_prefix,
-            '-DPYTHON_LIBRARY_SUFFIX=' + lib_suffix,
+            #'-DCMAKE_SHARED_LIBRARY_PREFIX=' + lib_prefix,
+            #'-DCMAKE_SHARED_LIBRARY_SUFFIX=' + lib_suffix,
+            #'-DPYTHON_LIBRARY_PREFIX=' + lib_prefix,
+            #'-DPYTHON_LIBRARY_SUFFIX=' + lib_suffix,
+            #'-DCMAKE_C_COMPILER=' + self.dummy.compiler.compiler[0],
+            #'-DCMAKE_C_FLAGS="' + ' '.join(self.dummy.compiler.compiler[1:]) + '"',
             '-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=' + str(extpath.parent.absolute()),
             '-DCMAKE_BUILD_TYPE=' + config
         ]
@@ -52,3 +64,10 @@ class cmake_build_ext(build_ext_orig):
         os.chdir(str(cwd))
 
         if not extpath.exists(): extpath.mkdir()  # creates dummy if not created
+
+def setup(*args, cmdclass={}, **kwargs):
+  if 'build_ext' not in cmdclass:
+    cmdclass['build_ext'] = cmake_build_ext
+  else:
+    print('Overriding CMake build_ext')
+  setup_orig(*args, cmdclass=cmdclass, **kwargs)

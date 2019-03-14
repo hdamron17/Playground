@@ -1,5 +1,5 @@
-from setuptools import setup, Extension
-from cmake_setuptools import CMakeExtension, cmake_build_ext
+from setuptools import Extension
+from cmake_setuptools import CMakeExtension, setup  # Patched setup function
 
 setup(
   name = 'ExtensionPlayground',
@@ -8,10 +8,7 @@ setup(
   packages = ['playground'],
   package_dir = {'': 'src'},
   ext_modules = [
-    Extension('playground.ext1', ['src/playground/ext1.c']),
-    CMakeExtension('playground.ext1cmake')
-  ],
-  cmdclass = {
-    'build_ext': cmake_build_ext,
-  }
+    Extension('playground.basic_ext', ['src/playground/basic_ext.c']),
+    CMakeExtension('playground.cmake_ext')  # TODO importing this is broken -- seg fault
+  ]
 )
