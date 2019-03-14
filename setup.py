@@ -1,5 +1,5 @@
 from setuptools import Extension
-from cmake_setuptools import CMakeExtension, setup  # Patched setup function
+from src.cmake_ext.cmake_setuptools import CMakeExtension, setup  # Patched setup function
 
 setup(
   name = 'ext_playground',
