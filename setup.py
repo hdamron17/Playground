@@ -1,4 +1,4 @@
-from distutils.core import setup, Extension
+from setuptools import setup, Extension
 #from cmake_setuptools import CMakeExtension, cmake_build_ext
 
 setup(
@@ -6,11 +6,12 @@ setup(
   version = '0.0.1',
   description = 'Package demoing python extension methods',
   packages = ['playground'],
+  package_dir = {'': 'src'},
   ext_modules = [
-    Extension('ext1', ['ext1.c'])
+    Extension('playground.ext1', ['src/playground/ext1.c'])
     #CMakeExtension('playground.ext1')
   ],
-  #cmdclass={
+  #cmdclass = {
   #  'build_ext': cmake_build_ext,
   #}
 )
