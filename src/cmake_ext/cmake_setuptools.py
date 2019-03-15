@@ -33,7 +33,7 @@ class cmake_build_ext(build_ext_orig):
           return
         cwd = pathlib.Path().absolute()
 
-        build_temp = pathlib.Path(self.build_temp)
+        build_temp = pathlib.Path(self.build_temp).joinpath(ext.dir)
         build_temp.mkdir(parents=True, exist_ok=True)
         extpath = pathlib.Path(self.get_ext_fullpath(ext.name))
         extpath.parent.mkdir(parents=True, exist_ok=True)
