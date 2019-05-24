@@ -1,0 +1,24 @@
+\documentclass[10pt,letterpaper]{article}
+
+\usepackage{latex2man}
+
+\begin{document}
+  \setVersion{0.0.1}
+  \setDate{10 December 2018}
+  \begin{Name}{7}{Example Man Page}{Hunter Damron}{Some misc. info}{Example Man Page}
+    example -- an example program to display latex2man
+  \end{Name}
+
+  \section{Synopsis}
+    \Prog{example} \Opt{-hv} \OptArg{-o}{filename} \File{file}
+
+  \section{Description}
+    This example man page is not actually associated with a program but rather demonstrates the usage of \Cmd{latex2man}{1}.
+
+  \section{Options}
+  \begin{Description}
+    \item[\Opt{-h, --help}] Prints this help message
+    \item[\Opt{-v, --verbose}] Be verbose
+    \item[\OptArg{-o, --output=}{filename}] Specify output file (Default is stdin)
+  \end{Description}
+\end{document}
